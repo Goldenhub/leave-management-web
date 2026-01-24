@@ -21,7 +21,7 @@ export function DashboardPage() {
     queryFn: () => leavesApi.getMyLeaves({ limit: 5 }),
   });
 
-  // Fetch pending approvals for managers
+
   const { data: pendingApprovals, isLoading: approvalsLoading } = useQuery({
     queryKey: ['pendingApprovals'],
     queryFn: () => leavesApi.getPendingApprovals(),

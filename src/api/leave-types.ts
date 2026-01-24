@@ -1,9 +1,9 @@
 import apiClient from './axios';
-import { LeaveType, CreateLeaveTypeData, LeaveRequirement, CreateLeaveRequirementData, RequirementType } from '../types';
+import { LeaveType, CreateLeaveTypeData, LeaveRequirement, CreateLeaveRequirementData,  } from '../types';
 
 export const leaveTypesApi = {
-  getAll: async (): Promise<LeaveType[]> => {
-    const response = await apiClient.get<LeaveType[]>('/leave-types');
+  getAll: async (): Promise<LeaveType> => {
+    const response = await apiClient.get<LeaveType>('/leave-types');
     return response.data;
   },
 

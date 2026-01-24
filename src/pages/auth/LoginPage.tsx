@@ -5,6 +5,17 @@ import { authApi } from '../../api/auth';
 import { useAuthStore } from '../../stores/authStore';
 import { Button, Input, toast } from '../../components/ui';
 
+
+
+export interface ErrorType {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
+
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,7 +31,7 @@ export function LoginPage() {
       toast.success('Welcome back!');
       navigate('/dashboard');
     },
-    onError: (error: any) => {
+    onError: (error: ErrorType) => {
       toast.error(error.response?.data?.message || 'Invalid credentials');
     },
   });

@@ -28,6 +28,10 @@ import { ToastContainer } from './components/ui';
 
 // Types
 import { Permissions } from './types';
+import MyLeaves from './pages/leave-types/LeaveType';
+import MyLeavesType from './pages/leave-types/LeaveType';
+import LeaveTypesTable from './pages/leave-types/LeaveType';
+import CreateLeaveType from './pages/leave-types/CreateLeaveType';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -71,6 +75,76 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+
+              <Route
+                path="/my-leaves"
+                element={
+                  <ProtectedRoute>
+                    <MyLeaves/>
+                  </ProtectedRoute>
+                }
+              />
+               <Route
+                path="/leave-types/create"
+                element={
+                  <ProtectedRoute>
+                   <CreateLeaveType/>
+                  </ProtectedRoute>
+                }
+              />
+
+                <Route
+                path="/approvals"
+                element={
+                  <ProtectedRoute>
+                    <MyLeaves/>
+                  </ProtectedRoute>
+                }
+              />
+
+                <Route
+                path="/leave-types"
+                element={
+                  <ProtectedRoute>
+                    <MyLeavesType/>
+                  </ProtectedRoute>
+                }
+              />
+
+                <Route
+                path="/employees"
+                element={
+                  <ProtectedRoute>
+                    <MyLeaves/>
+                  </ProtectedRoute>
+                }
+              />  <Route
+                path="/departments"
+                element={
+                  <ProtectedRoute>
+                    <MyLeaves/>
+                  </ProtectedRoute>
+                }
+              />
+                <Route
+                path="/roles-permissions"
+                element={
+                  <ProtectedRoute>
+                    <MyLeaves/>
+                  </ProtectedRoute>
+                }
+              /> 
+
+               <Route
+                path="/reports"
+                element={
+                  <ProtectedRoute>
+                    <MyLeaves/>
+                  </ProtectedRoute>
+                }
+              />
+
+          
 
               {/* Manager Routes */}
               <Route

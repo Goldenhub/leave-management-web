@@ -91,11 +91,13 @@ export interface Employee {
 }
 
 export interface LeaveType {
-  id: number;
-  name: string;
-  description?: string;
-  maxDays?: number;
-  requirements?: LeaveRequirement[];
+  data: {
+    id: number;
+    name: string;
+    description?: string;
+    maxDays?: number;
+    requirements?: LeaveRequirement[];
+  }
 }
 
 export interface LeaveRequirement {
@@ -262,7 +264,7 @@ export const Permissions = {
   DEPARTMENT_UPDATE: 'department:update',
   DEPARTMENT_DELETE: 'department:delete',
   DEPARTMENT_MANAGE: 'department:manage',
-  
+
   // Employee
   EMPLOYEE_CREATE: 'employee:create',
   EMPLOYEE_READ: 'employee:read',
@@ -270,7 +272,7 @@ export const Permissions = {
   EMPLOYEE_UPDATE: 'employee:update',
   EMPLOYEE_DELETE: 'employee:delete',
   EMPLOYEE_MANAGE: 'employee:manage',
-  
+
   // Role
   ROLE_CREATE: 'role:create',
   ROLE_READ: 'role:read',
@@ -279,11 +281,11 @@ export const Permissions = {
   ROLE_DELETE: 'role:delete',
   ROLE_ASSIGN_PERMISSIONS: 'role:assignPermissions',
   ROLE_MANAGE: 'role:manage',
-  
+
   // Profile
   PROFILE_VIEW: 'profile:view',
   PROFILE_UPDATE: 'profile:update',
-  
+
   // Leave
   LEAVE_CREATE: 'leave:create',
   LEAVE_READ: 'leave:read',
@@ -292,7 +294,7 @@ export const Permissions = {
   LEAVE_DELETE: 'leave:delete',
   LEAVE_APPROVE: 'leave:approve',
   LEAVE_MANAGE: 'leave:manage',
-  
+
   // Leave Type
   LEAVE_TYPE_CREATE: 'leaveType:create',
   LEAVE_TYPE_READ: 'leaveType:read',
@@ -300,7 +302,7 @@ export const Permissions = {
   LEAVE_TYPE_UPDATE: 'leaveType:update',
   LEAVE_TYPE_DELETE: 'leaveType:delete',
   LEAVE_TYPE_MANAGE: 'leaveType:manage',
-  
+
   // Report
   REPORT_CREATE: 'report:create',
   REPORT_READ: 'report:read',
