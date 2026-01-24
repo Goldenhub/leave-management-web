@@ -2,19 +2,20 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { leaveTypesApi } from '../../api/leave-types';
 import { leaveRequirementsApi } from '../../api/leave-requirements';
-import { LeaveType, RequirementType, LeaveRequirement } from '../../types';
+import { LeaveType, RequirementType,} from '../../types';
 import { Button, Input, Card, Modal, PageLoader, EmptyState, Textarea, Select, toast } from '../../components/ui';
+import { ErrorType } from '../auth/LoginPage';
 
-const colorOptions = [
-  '#6366f1', // Indigo
-  '#10b981', // Green
-  '#f59e0b', // Amber
-  '#ef4444', // Red
-  '#3b82f6', // Blue
-  '#8b5cf6', // Purple
-  '#ec4899', // Pink
-  '#14b8a6', // Teal
-];
+// const colorOptions = [
+//   '#6366f1', // Indigo
+//   '#10b981', // Green
+//   '#f59e0b', // Amber
+//   '#ef4444', // Red
+//   '#3b82f6', // Blue
+//   '#8b5cf6', // Purple
+//   '#ec4899', // Pink
+//   '#14b8a6', // Teal
+// ];
 
 export function LeaveTypesPage() {
   const queryClient = useQueryClient();
@@ -45,19 +46,19 @@ export function LeaveTypesPage() {
       queryClient.invalidateQueries({ queryKey: ['leaveTypes'] });
       closeModal();
     },
-    onError: (error: any) => {
+    onError: (error: ErrorType) => {
       toast.error(error.response?.data?.message || 'Failed to create leave type');
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => leaveTypesApi.update(id, data),
+    mutationFn: ({ id, data }: { id: number; data: any}) => leaveTypesApi.update(id, data),
     onSuccess: () => {
       toast.success('Leave type updated successfully');
       queryClient.invalidateQueries({ queryKey: ['leaveTypes'] });
       closeModal();
     },
-    onError: (error: any) => {
+    onError: (error: ErrorType) => {
       toast.error(error.response?.data?.message || 'Failed to update leave type');
     },
   });
@@ -68,7 +69,7 @@ export function LeaveTypesPage() {
       toast.success('Leave type deleted successfully');
       queryClient.invalidateQueries({ queryKey: ['leaveTypes'] });
     },
-    onError: (error: any) => {
+    onError: (error: ErrorType) => {
       toast.error(error.response?.data?.message || 'Failed to delete leave type');
     },
   });

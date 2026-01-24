@@ -10,9 +10,15 @@ interface EmployeeFilters {
   limit?: number;
 }
 
+
+
 export const employeesApi = {
   getAll: async (filters?: EmployeeFilters): Promise<PaginatedResponse<Employee>> => {
     const response = await apiClient.get<PaginatedResponse<Employee>>('/employees', { params: filters });
+    return response.data;
+  },
+    getMenu: async ()=> {
+    const response = await apiClient.get('/employees/menu');
     return response.data;
   },
 
