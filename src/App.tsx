@@ -1,37 +1,33 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Layouts
-import { AuthLayout, DashboardLayout } from './layouts';
+import { AuthLayout, DashboardLayout } from "./layouts";
 
 // Route Guards
-import { ProtectedRoute, PublicRoute } from './components/ProtectedRoute';
+import { ProtectedRoute, PublicRoute } from "./components/ProtectedRoute";
 
 // Auth Pages
-import { LoginPage, RegisterPage } from './pages/auth';
+import { LoginPage, RegisterPage } from "./pages/auth";
 
 // Dashboard
-import { DashboardPage } from './pages/dashboard';
+import { DashboardPage } from "./pages/dashboard";
 
 // Leave Pages
-import { LeaveApplyPage, LeaveHistoryPage, LeaveApprovalsPage, AllLeavesPage } from './pages/leaves';
+import { LeaveApplyPage, LeaveHistoryPage, LeaveApprovalsPage, AllLeavesPage } from "./pages/leaves";
 
 // Admin/HR Pages
-import { EmployeesPage } from './pages/employees';
-import { DepartmentsPage } from './pages/departments';
-import { DesignationsPage } from './pages/designations';
-import { RolesPage } from './pages/roles';
-import { LeaveTypesPage } from './pages/leave-types';
+import { EmployeesPage } from "./pages/employees";
+import { DepartmentsPage } from "./pages/departments";
+import { DesignationsPage } from "./pages/designations";
+import { RolesPage } from "./pages/roles";
+import { LeaveTypesPage } from "./pages/leave-types";
 
 // UI Components
-import { ToastContainer } from './components/ui';
+import { ToastContainer } from "./components/ui";
 
 // Types
-import { Permissions } from './types';
-import MyLeaves from './pages/leave-types/LeaveType';
-import MyLeavesType from './pages/leave-types/LeaveType';
-import LeaveTypesTable from './pages/leave-types/LeaveType';
-import CreateLeaveType from './pages/leave-types/CreateLeaveType';
+// import { Permissions } from "./types";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -62,141 +58,27 @@ function App() {
             <Route element={<DashboardLayout />}>
               {/* Dashboard */}
               <Route path="/dashboard" element={<DashboardPage />} />
-
               {/* Leave Management */}
-              <Route path="/leaves" element={<LeaveHistoryPage />} />
-              <Route path="/leaves/apply" element={<LeaveApplyPage />} />
-              
-              <Route
-                path="/all-leaves"
-                element={
-                  <ProtectedRoute requiredPermissions={[Permissions.LEAVE_VIEW]}>
-                    <AllLeavesPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/my-leaves"
-                element={
-                  <ProtectedRoute>
-                    <MyLeaves/>
-                  </ProtectedRoute>
-                }
-              />
-               <Route
-                path="/leave-types/create"
-                element={
-                  <ProtectedRoute>
-                   <CreateLeaveType/>
-                  </ProtectedRoute>
-                }
-              />
-
-                <Route
-                path="/approvals"
-                element={
-                  <ProtectedRoute>
-                    <MyLeaves/>
-                  </ProtectedRoute>
-                }
-              />
-
-                <Route
-                path="/leave-types"
-                element={
-                  <ProtectedRoute>
-                    <MyLeavesType/>
-                  </ProtectedRoute>
-                }
-              />
-
-                <Route
-                path="/employees"
-                element={
-                  <ProtectedRoute>
-                    <MyLeaves/>
-                  </ProtectedRoute>
-                }
-              />  <Route
-                path="/departments"
-                element={
-                  <ProtectedRoute>
-                    <MyLeaves/>
-                  </ProtectedRoute>
-                }
-              />
-                <Route
-                path="/roles-permissions"
-                element={
-                  <ProtectedRoute>
-                    <MyLeaves/>
-                  </ProtectedRoute>
-                }
-              /> 
-
-               <Route
-                path="/reports"
-                element={
-                  <ProtectedRoute>
-                    <MyLeaves/>
-                  </ProtectedRoute>
-                }
-              />
-
-          
-
-              {/* Manager Routes */}
-              <Route
+              <Route path="/leaves">
+                <Route index element={<LeaveHistoryPage />} />
+                <Route path="apply" element={<LeaveApplyPage />} />
+              </Route>
+              <Route path="/all-leaves" element={<AllLeavesPage />} />
+              <Route path="/approvals" element={<LeaveApprovalsPage />} />
+              {/* <Route
                 path="/approvals"
                 element={
                   <ProtectedRoute requiredPermissions={[Permissions.LEAVE_APPROVE]}>
                     <LeaveApprovalsPage />
                   </ProtectedRoute>
                 }
-              />
-
+              /> */}
               {/* Admin/HR Routes */}
-              <Route
-                path="/employees"
-                element={
-                  <ProtectedRoute requiredPermissions={[Permissions.EMPLOYEE_READ]}>
-                    <EmployeesPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/departments"
-                element={
-                  <ProtectedRoute requiredPermissions={[Permissions.DEPARTMENT_READ]}>
-                    <DepartmentsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/designations"
-                element={
-                  <ProtectedRoute requiredPermissions={[Permissions.LEAVE_TYPE_READ]}>
-                    <DesignationsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/roles"
-                element={
-                  <ProtectedRoute requiredPermissions={[Permissions.ROLE_READ]}>
-                    <RolesPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/leave-types"
-                element={
-                  <ProtectedRoute requiredPermissions={[Permissions.LEAVE_TYPE_READ]}>
-                    <LeaveTypesPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/employees" element={<EmployeesPage />} />
+              <Route path="/departments" element={<DepartmentsPage />} />
+              <Route path="/designations" element={<DesignationsPage />} />
+              <Route path="/roles-permissions" element={<RolesPage />} />
+              <Route path="/leave-types" element={<LeaveTypesPage />} />
             </Route>
           </Route>
 

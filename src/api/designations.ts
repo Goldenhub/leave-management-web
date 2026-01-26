@@ -1,29 +1,29 @@
-import apiClient from './axios';
-import { Designation, CreateDesignationData } from '../types';
+import apiClient from "./axios";
+import { Designation, CreateDesignationData, ApiSuccessResponse } from "../types";
 
 export const designationsApi = {
-  getAll: async (): Promise<Designation[]> => {
-    const response = await apiClient.get<Designation[]>('/designations');
+  getAll: async (): Promise<ApiSuccessResponse<Designation[]>> => {
+    const response = await apiClient.get<ApiSuccessResponse<Designation[]>>("/designations");
     return response.data;
   },
 
-  getByDepartment: async (departmentId: number): Promise<Designation[]> => {
-    const response = await apiClient.get<Designation[]>(`/designations/department/${departmentId}`);
+  getByDepartment: async (departmentId: number): Promise<ApiSuccessResponse<Designation[]>> => {
+    const response = await apiClient.get<ApiSuccessResponse<Designation[]>>(`/designations/department/${departmentId}`);
     return response.data;
   },
 
-  getById: async (id: number): Promise<Designation> => {
-    const response = await apiClient.get<Designation>(`/designations/${id}`);
+  getById: async (id: number): Promise<ApiSuccessResponse<Designation>> => {
+    const response = await apiClient.get<ApiSuccessResponse<Designation>>(`/designations/${id}`);
     return response.data;
   },
 
-  create: async (data: CreateDesignationData): Promise<Designation> => {
-    const response = await apiClient.post<Designation>('/designations', data);
+  create: async (data: CreateDesignationData): Promise<ApiSuccessResponse<Designation>> => {
+    const response = await apiClient.post<ApiSuccessResponse<Designation>>("/designations", data);
     return response.data;
   },
 
-  update: async (id: number, data: Partial<CreateDesignationData>): Promise<Designation> => {
-    const response = await apiClient.patch<Designation>(`/designations/${id}`, data);
+  update: async (id: number, data: Partial<CreateDesignationData>): Promise<ApiSuccessResponse<Designation>> => {
+    const response = await apiClient.put<ApiSuccessResponse<Designation>>(`/designations/${id}`, data);
     return response.data;
   },
 

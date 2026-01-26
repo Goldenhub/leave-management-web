@@ -1,5 +1,5 @@
-import apiClient from './axios';
-import { Role, PaginatedResponse } from '../types';
+import apiClient from "./axios";
+import { Role, PaginatedResponse, ApiSuccessResponse } from "../types";
 
 interface CreateRoleData {
   name: string;
@@ -8,30 +8,30 @@ interface CreateRoleData {
 }
 
 export const rolesApi = {
-  getAll: async (): Promise<Role[]> => {
-    const response = await apiClient.get<Role[]>('/roles');
+  getAll: async (): Promise<ApiSuccessResponse<Role[]>> => {
+    const response = await apiClient.get<ApiSuccessResponse<Role[]>>("/roles");
     return response.data;
   },
 
   getPaginated: async (page = 1, limit = 10): Promise<PaginatedResponse<Role>> => {
-    const response = await apiClient.get<PaginatedResponse<Role>>('/roles', {
+    const response = await apiClient.get<PaginatedResponse<Role>>("/roles", {
       params: { page, limit },
     });
     return response.data;
   },
 
-  getById: async (id: number): Promise<Role> => {
-    const response = await apiClient.get<Role>(`/roles/${id}`);
+  getById: async (id: number): Promise<ApiSuccessResponse<Role>> => {
+    const response = await apiClient.get<ApiSuccessResponse<Role>>(`/roles/${id}`);
     return response.data;
   },
 
-  create: async (data: CreateRoleData): Promise<Role> => {
-    const response = await apiClient.post<Role>('/roles', data);
+  create: async (data: CreateRoleData): Promise<ApiSuccessResponse<Role>> => {
+    const response = await apiClient.post<ApiSuccessResponse<Role>>("/roles", data);
     return response.data;
   },
 
-  update: async (id: number, data: Partial<CreateRoleData>): Promise<Role> => {
-    const response = await apiClient.patch<Role>(`/roles/${id}`, data);
+  update: async (id: number, data: Partial<CreateRoleData>): Promise<ApiSuccessResponse<Role>> => {
+    const response = await apiClient.put<ApiSuccessResponse<Role>>(`/roles/${id}`, data);
     return response.data;
   },
 

@@ -1,29 +1,29 @@
-import apiClient from './axios';
-import { LeaveRequirement, CreateLeaveRequirementData } from '../types';
+import apiClient from "./axios";
+import { LeaveRequirement, CreateLeaveRequirementData, ApiSuccessResponse } from "../types";
 
 export const leaveRequirementsApi = {
-  getAll: async (): Promise<LeaveRequirement[]> => {
-    const response = await apiClient.get<LeaveRequirement[]>('/leave-requirements');
+  getAll: async (): Promise<ApiSuccessResponse<LeaveRequirement[]>> => {
+    const response = await apiClient.get<ApiSuccessResponse<LeaveRequirement[]>>("/leave-requirements");
     return response.data;
   },
 
-  getByLeaveType: async (leaveTypeId: number): Promise<LeaveRequirement[]> => {
-    const response = await apiClient.get<LeaveRequirement[]>(`/leave-requirements/leave-type/${leaveTypeId}`);
+  getByLeaveType: async (leaveTypeId: number): Promise<ApiSuccessResponse<LeaveRequirement[]>> => {
+    const response = await apiClient.get<ApiSuccessResponse<LeaveRequirement[]>>(`/leave-requirements/leave-type/${leaveTypeId}`);
     return response.data;
   },
 
-  getById: async (id: number): Promise<LeaveRequirement> => {
-    const response = await apiClient.get<LeaveRequirement>(`/leave-requirements/${id}`);
+  getById: async (id: number): Promise<ApiSuccessResponse<LeaveRequirement>> => {
+    const response = await apiClient.get<ApiSuccessResponse<LeaveRequirement>>(`/leave-requirements/${id}`);
     return response.data;
   },
 
-  create: async (data: CreateLeaveRequirementData): Promise<LeaveRequirement> => {
-    const response = await apiClient.post<LeaveRequirement>('/leave-requirements', data);
+  create: async (data: CreateLeaveRequirementData): Promise<ApiSuccessResponse<LeaveRequirement>> => {
+    const response = await apiClient.post<ApiSuccessResponse<LeaveRequirement>>("/leave-requirements", data);
     return response.data;
   },
 
-  update: async (id: number, data: Partial<CreateLeaveRequirementData>): Promise<LeaveRequirement> => {
-    const response = await apiClient.patch<LeaveRequirement>(`/leave-requirements/${id}`, data);
+  update: async (id: number, data: Partial<CreateLeaveRequirementData>): Promise<ApiSuccessResponse<LeaveRequirement>> => {
+    const response = await apiClient.patch<ApiSuccessResponse<LeaveRequirement>>(`/leave-requirements/${id}`, data);
     return response.data;
   },
 
