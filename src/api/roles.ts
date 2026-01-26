@@ -20,7 +20,7 @@ export const rolesApi = {
     return response.data;
   },
 
-  getById: async (id: number): Promise<Role> => {
+  getById: async (id: number | string ): Promise<Role> => {
     const response = await apiClient.get<Role>(`/roles/${id}`);
     return response.data;
   },

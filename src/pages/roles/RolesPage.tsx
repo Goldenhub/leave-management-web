@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { rolesApi } from '../../api/roles';
 import { Role, Permissions } from '../../types';
 import { Button, Input, Card, Modal, PageLoader, EmptyState, Textarea, toast } from '../../components/ui';
+import { ErrorType } from '../auth/LoginPage';
 
 const allPermissions = Object.values(Permissions);
 
@@ -24,7 +25,7 @@ export function RolesPage() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       closeModal();
     },
-    onError: (error: any) => {
+    onError: (error: ErrorType) => {
       toast.error(error.response?.data?.message || 'Failed to create role');
     },
   });
@@ -36,7 +37,7 @@ export function RolesPage() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       closeModal();
     },
-    onError: (error: any) => {
+    onError: (error: ErrorType) => {
       toast.error(error.response?.data?.message || 'Failed to update role');
     },
   });
@@ -47,7 +48,7 @@ export function RolesPage() {
       toast.success('Role deleted successfully');
       queryClient.invalidateQueries({ queryKey: ['roles'] });
     },
-    onError: (error: any) => {
+    onError: (error: ErrorType) => {
       toast.error(error.response?.data?.message || 'Failed to delete role');
     },
   });

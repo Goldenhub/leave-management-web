@@ -1,34 +1,24 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { leaveTypesApi } from '../../api';
-import { Permissions } from '../../types';
-import { useAuthStore } from '../../stores/authStore';
 import { useQuery } from '@tanstack/react-query';
 
-interface Requirement {
-  id: number;
-  type: 'DOCUMENT' | 'MIN_SERVICE';
-  value: string;
-}
 
-interface LeaveType {
 
-  id: number;
-  name: string;
-  description: string;
-  maxDays: number;
-  requirements: Requirement[];
-}
+
+
 
 
 export default function LeaveTypesTable() {
-    const {  hasPermission } = useAuthStore();
+
 
      const { data: leaveTypes, isLoading: leaveTypesLoading } = useQuery({
         queryKey: ['leaveTypes'],
         queryFn: () => leaveTypesApi.getAll(),
-        // enabled: hasPermission(Permissions.LEAVE_TYPE_READ),
+        // enabled: hasPemission(Permissions.LEAVE_TYPE_READ),
       });
+
+      console.log(leaveTypesLoading)
       
 
 

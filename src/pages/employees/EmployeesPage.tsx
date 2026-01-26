@@ -416,7 +416,7 @@ function EmployeeFormModal({
             ]}
           />
         </div>
-
+  
         <div className="grid grid-cols-2 gap-4">
           <Input
             label="Hire Date"
@@ -469,7 +469,7 @@ function EmployeeFormModal({
             required
             options={[
               { value: '', label: 'Select role' },
-              ...roles.map(r => ({ value: r.id.toString(), label: r.name })),
+              ...roles.data.map(r => ({ value: r.id.toString(), label: r.name })),
             ]}
           />
           <Select
@@ -479,7 +479,7 @@ function EmployeeFormModal({
             onChange={handleChange}
             options={[
               { value: '', label: 'None (Top Level)' },
-              ...managers
+              ...managers.data
                 .filter(m => m.id !== employee?.id) // Prevent self-manager
                 .map(m => ({ value: m.employeeId, label: `${m.firstName} ${m.lastName} (${m.designation?.title})` })),
             ]}

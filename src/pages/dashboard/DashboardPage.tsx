@@ -88,7 +88,8 @@ export function DashboardPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm font-medium text-neutral-500">
-                    {balance.leaveType.name}
+                    {balance.leaveType.name} 
+                     
                   </p>
                   <p className="text-3xl font-bold text-neutral-900 mt-1">
                     {balance.remaining}

@@ -120,10 +120,10 @@ export function DashboardLayout() {
             to="/dashboard"
             className={({ isActive }) => `w-full flex items-center 
             justify-between cursor-pointer px-3 
-            py-2.5 rounded-lg text-sm font-medium text-neutral-600 hover:bg-neutral-100 
+            py-2.5 rounded-lg text-sm font-medium text-neutral-600 
                ${isActive
-                          ? 'bg-primary-400 text-white'
-                          : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+                          ? 'bg-primary-400 text-neutral-900'
+                          : ' text-neutral-900 hover:bg-neutral-100 '
                }`}
           >
             Overview

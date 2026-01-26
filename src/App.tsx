@@ -97,7 +97,7 @@ function App() {
                 path="/approvals"
                 element={
                   <ProtectedRoute>
-                    <MyLeaves/>
+                      <LeaveApprovalsPage />
                   </ProtectedRoute>
                 }
               />
@@ -115,14 +115,14 @@ function App() {
                 path="/employees"
                 element={
                   <ProtectedRoute>
-                    <MyLeaves/>
+                  <EmployeesPage/>
                   </ProtectedRoute>
                 }
               />  <Route
                 path="/departments"
                 element={
                   <ProtectedRoute>
-                    <MyLeaves/>
+                    <DepartmentsPage/>
                   </ProtectedRoute>
                 }
               />
@@ -130,7 +130,7 @@ function App() {
                 path="/roles-permissions"
                 element={
                   <ProtectedRoute>
-                    <MyLeaves/>
+                      <RolesPage/>
                   </ProtectedRoute>
                 }
               /> 
@@ -147,14 +147,7 @@ function App() {
           
 
               {/* Manager Routes */}
-              <Route
-                path="/approvals"
-                element={
-                  <ProtectedRoute requiredPermissions={[Permissions.LEAVE_APPROVE]}>
-                    <LeaveApprovalsPage />
-                  </ProtectedRoute>
-                }
-              />
+           
 
               {/* Admin/HR Routes */}
               <Route
