@@ -12,6 +12,7 @@ import { LoginPage, RegisterPage } from "./pages/auth";
 
 // Dashboard
 import { DashboardPage } from "./pages/dashboard";
+import { UpdatePasswordPage } from "./pages/dashboard/UpdatePassword";
 
 // Leave Pages
 import { LeaveApplyPage, LeaveHistoryPage, LeaveApprovalsPage, AllLeavesPage } from "./pages/leaves";
@@ -59,7 +60,8 @@ function App() {
               {/* Dashboard */}
               <Route path="/dashboard" element={<DashboardPage />} />
               {/* Leave Management */}
-              <Route path="/leaves">
+              <Route path="/update-password" element={<UpdatePasswordPage />} />
+              <Route path="/my-leaves">
                 <Route index element={<LeaveHistoryPage />} />
                 <Route path="apply" element={<LeaveApplyPage />} />
               </Route>

@@ -12,7 +12,7 @@ interface LeaveFilters {
 }
 
 interface CreateLeaveData {
-  leaveTypeId: number;
+  leaveTypeId: string;
   startDate: string;
   endDate: string;
   reason: string;
@@ -27,7 +27,7 @@ export const leavesApi = {
 
   // Get my leaves (for employees)
   getMyLeaves: async (filters?: LeaveFilters): Promise<ApiSuccessResponse<Leave[]>> => {
-    const response = await apiClient.get<ApiSuccessResponse<Leave[]>>("/leaves/my", { params: filters });
+    const response = await apiClient.get<ApiSuccessResponse<Leave[]>>("/leaves/own", { params: filters });
     return response.data;
   },
 
@@ -52,7 +52,7 @@ export const leavesApi = {
       formData.append("endDate", data.endDate);
       formData.append("reason", data.reason);
 
-      files.forEach((file, index) => {
+      files.forEach((file) => {
         formData.append(`attachments`, file);
       });
 

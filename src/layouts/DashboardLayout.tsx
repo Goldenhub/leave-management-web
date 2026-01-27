@@ -33,7 +33,7 @@ export function DashboardLayout() {
 
   const navigate = useNavigate();
 
-  const { data: menu, isLoading: MenuLoading } = useQuery({
+  const { data: menu } = useQuery({
     queryKey: ["NavMenu"],
     queryFn: () => employeesApi.getMenu(),
     enabled: !!user,

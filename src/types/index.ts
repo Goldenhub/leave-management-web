@@ -167,6 +167,11 @@ export interface RegisterData {
   lastName: string;
 }
 
+export interface UpdatePasswordData {
+  currentPassword?: string;
+  newPassword: string;
+}
+
 export interface AuthResponse {
   data: AuthUser;
   message: string;

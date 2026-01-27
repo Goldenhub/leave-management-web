@@ -1,29 +1,32 @@
-import { useQuery } from '@tanstack/react-query';
-import { Link, useNavigate } from 'react-router-dom';
-import { leavesApi } from '../../api/leaves';
-import { useAuthStore } from '../../stores/authStore';
-import { LeaveStatus, Permissions } from '../../types';
-import { Card, CardHeader, Button, StatusBadge, PageLoader, EmptyState } from '../../components/ui';
+import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
+import { leavesApi } from "../../api/leaves";
+import { useAuthStore } from "../../stores/authStore";
+import { LeaveStatus, Permissions } from "../../types";
+import { Card, CardHeader, Button, StatusBadge, PageLoader, EmptyState } from "../../components/ui";
 
 export function DashboardPage() {
   const { user, hasPermission } = useAuthStore();
   const navigate = useNavigate();
 
+  if (!user?.passwordUpdated) {
+    navigate("/update-password");
+  }
+
   // Fetch leave balances
   const { data: balances, isLoading: balancesLoading } = useQuery({
-    queryKey: ['leaveBalances'],
+    queryKey: ["leaveBalances"],
     queryFn: () => leavesApi.getBalances(),
   });
 
   // Fetch recent leaves
   const { data: recentLeaves, isLoading: leavesLoading } = useQuery({
-    queryKey: ['myLeaves', { limit: 5 }],
+    queryKey: ["myLeaves", { limit: 5 }],
     queryFn: () => leavesApi.getMyLeaves({ limit: 5 }),
   });
 
-
   const { data: pendingApprovals, isLoading: approvalsLoading } = useQuery({
-    queryKey: ['pendingApprovals'],
+    queryKey: ["pendingApprovals"],
     queryFn: () => leavesApi.getPendingApprovals(),
     enabled: hasPermission(Permissions.LEAVE_APPROVE),
   });
@@ -35,10 +38,10 @@ export function DashboardPage() {
   }
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
@@ -55,12 +58,8 @@ export function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-900">
-            Welcome back, {user?.firstName}!
-          </h1>
-          <p className="text-neutral-500 mt-1">
-            Here's what's happening with your leave requests
-          </p>
+          <h1 className="text-2xl font-bold text-neutral-900">Welcome back, {user?.firstName}!</h1>
+          <p className="text-neutral-500 mt-1">Here's what's happening with your leave requests</p>
         </div>
         <Link to="/leaves/apply">
           <Button
@@ -81,32 +80,15 @@ export function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {balances?.map((balance) => (
             <Card key={balance.leaveTypeId} className="relative overflow-hidden">
-              <div
-                className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-1/2 translate-x-1/2"
-                style={{ backgroundColor: '#6366f1' }}
-              />
+              <div className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-1/2 translate-x-1/2" style={{ backgroundColor: "#6366f1" }} />
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-neutral-500">
-                    {balance.leaveType.name} 
-                     
-                  </p>
-                  <p className="text-3xl font-bold text-neutral-900 mt-1">
-                    {balance.remaining}
-                  </p>
-                  <p className="text-sm text-neutral-500 mt-1">
-                    of {balance.total} days remaining
-                  </p>
+                  <p className="text-sm font-medium text-neutral-500">{balance.leaveType.name}</p>
+                  <p className="text-3xl font-bold text-neutral-900 mt-1">{balance.remaining}</p>
+                  <p className="text-sm text-neutral-500 mt-1">of {balance.total} days remaining</p>
                 </div>
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-50"
-                >
-                  <svg
-                    className="w-5 h-5 text-indigo-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-50">
+                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
@@ -120,10 +102,7 @@ export function DashboardPage() {
             </Card>
           )) || (
             <Card className="col-span-full">
-              <EmptyState
-                title="No leave balances found"
-                description="Your leave balances will appear here once configured."
-              />
+              <EmptyState title="No leave balances found" description="Your leave balances will appear here once configured." />
             </Card>
           )}
         </div>
@@ -149,14 +128,10 @@ export function DashboardPage() {
                 <div key={leave.id} className="px-6 py-4 hover:bg-neutral-50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-neutral-900">
-                        {leave.leaveType?.name || 'Leave'}
-                      </p>
+                      <p className="font-medium text-neutral-900">{leave.leaveType?.name || "Leave"}</p>
                       <p className="text-sm text-neutral-500 mt-0.5">
                         {formatDate(leave.startDate)} - {formatDate(leave.endDate)}
-                        <span className="text-neutral-400 ml-1">
-                          ({getDaysCount(leave.startDate, leave.endDate)} day(s))
-                        </span>
+                        <span className="text-neutral-400 ml-1">({getDaysCount(leave.startDate, leave.endDate)} day(s))</span>
                       </p>
                     </div>
                     <StatusBadge status={leave.status} size="sm" />
@@ -169,8 +144,8 @@ export function DashboardPage() {
                   title="No leave requests"
                   description="You haven't submitted any leave requests yet."
                   action={{
-                    label: 'Apply for Leave',
-                    onClick: () => navigate('/leaves/apply'),
+                    label: "Apply for Leave",
+                    onClick: () => navigate("/leaves/apply"),
                   }}
                 />
               </div>
@@ -204,7 +179,8 @@ export function DashboardPage() {
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
                           <span className="text-sm font-medium text-primary-700">
-                            {leave.employee?.firstName?.[0]}{leave.employee?.lastName?.[0]}
+                            {leave.employee?.firstName?.[0]}
+                            {leave.employee?.lastName?.[0]}
                           </span>
                         </div>
                         <div>
@@ -216,7 +192,9 @@ export function DashboardPage() {
                           </p>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => navigate('/approvals')}>Review</Button>
+                      <Button variant="outline" size="sm" onClick={() => navigate("/approvals")}>
+                        Review
+                      </Button>
                     </div>
                   </div>
                 ))
@@ -244,27 +222,19 @@ export function DashboardPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 bg-success-50 rounded-lg">
                 <p className="text-sm text-success-600 font-medium">Approved</p>
-                <p className="text-2xl font-bold text-success-700 mt-1">
-                  {recentLeaves?.data?.filter(l => l.status === LeaveStatus.Approved).length || 0}
-                </p>
+                <p className="text-2xl font-bold text-success-700 mt-1">{recentLeaves?.data?.filter((l) => l.status === LeaveStatus.Approved).length || 0}</p>
               </div>
               <div className="p-4 bg-warning-50 rounded-lg">
                 <p className="text-sm text-warning-600 font-medium">Pending</p>
-                <p className="text-2xl font-bold text-warning-700 mt-1">
-                  {recentLeaves?.data?.filter(l => l.status === LeaveStatus.Pending).length || 0}
-                </p>
+                <p className="text-2xl font-bold text-warning-700 mt-1">{recentLeaves?.data?.filter((l) => l.status === LeaveStatus.Pending).length || 0}</p>
               </div>
               <div className="p-4 bg-danger-50 rounded-lg">
                 <p className="text-sm text-danger-600 font-medium">Rejected</p>
-                <p className="text-2xl font-bold text-danger-700 mt-1">
-                  {recentLeaves?.data?.filter(l => l.status === LeaveStatus.Rejected).length || 0}
-                </p>
+                <p className="text-2xl font-bold text-danger-700 mt-1">{recentLeaves?.data?.filter((l) => l.status === LeaveStatus.Rejected).length || 0}</p>
               </div>
               <div className="p-4 bg-neutral-100 rounded-lg">
                 <p className="text-sm text-neutral-600 font-medium">Canceled</p>
-                <p className="text-2xl font-bold text-neutral-700 mt-1">
-                  {recentLeaves?.data?.filter(l => l.status === LeaveStatus.Canceled).length || 0}
-                </p>
+                <p className="text-2xl font-bold text-neutral-700 mt-1">{recentLeaves?.data?.filter((l) => l.status === LeaveStatus.Canceled).length || 0}</p>
               </div>
             </div>
           </Card>

@@ -1,6 +1,6 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '../stores/authStore';
-import { Permission } from '../types';
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuthStore } from "../stores/authStore";
+import { Permission } from "../types";
 
 interface ProtectedRouteProps {
   children?: React.ReactNode;
@@ -8,21 +8,15 @@ interface ProtectedRouteProps {
   requireAll?: boolean;
 }
 
-export function ProtectedRoute({ 
-  children, 
-  requiredPermissions = [], 
-  requireAll = false 
-}: ProtectedRouteProps) {
-  const { isAuthenticated, hasPermission, hasAnyPermission } = useAuthStore();
+export function ProtectedRoute({ children, requiredPermissions = [], requireAll = false }: ProtectedRouteProps) {
+  const { isAuthenticated, hasPermission, hasAnyPermission, user } = useAuthStore();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
   if (requiredPermissions.length > 0) {
-    const hasAccess = requireAll
-      ? requiredPermissions.every(p => hasPermission(p))
-      : hasAnyPermission(requiredPermissions);
+    const hasAccess = requireAll ? requiredPermissions.every((p) => hasPermission(p)) : hasAnyPermission(requiredPermissions);
 
     if (!hasAccess) {
       return <Navigate to="/dashboard" replace />;
