@@ -5,6 +5,8 @@ import { ApiError, ApprovalDecision } from "../../types";
 import { Button, Card, Textarea, Modal, PageLoader, EmptyState, toast } from "../../components/ui";
 import { AxiosError } from "axios";
 
+const STATIC_SERVER_URL = import.meta.env.VITE_SERVE_STATIC_URL;
+
 export function LeaveApprovalsPage() {
   const queryClient = useQueryClient();
   const [actionModal, setActionModal] = useState<{
@@ -140,6 +142,17 @@ export function LeaveApprovalsPage() {
                   </Button>
                 </div>
               </div>
+
+              {/* Leave Attachments */}
+              {leave?.attachments?.length && (
+                <div className="flex gap-4 mt-4">
+                  {leave?.attachments?.map((attachment) => (
+                    <a href={`${STATIC_SERVER_URL}${attachment.url}`} target="_blank" rel="noopener noreferrer" className="border border-blue-200 p-2 rounded-2xl text-xs hover:text-blue-400 hover:border-blue-400">
+                      View {attachment.type}
+                    </a>
+                  ))}
+                </div>
+              )}
 
               {/* Reason */}
               {leave.reason && (

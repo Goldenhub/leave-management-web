@@ -116,7 +116,7 @@ export function DashboardPage() {
               title="Recent Requests"
               subtitle="Your recent leave applications"
               action={
-                <Link to="/leaves" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+                <Link to="/my-leaves" className="text-sm text-primary-600 hover:text-primary-700 font-medium">
                   View all
                 </Link>
               }
