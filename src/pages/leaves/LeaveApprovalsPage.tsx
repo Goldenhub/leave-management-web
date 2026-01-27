@@ -1,66 +1,62 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { leavesApi } from '../../api/leaves';
-import { ApprovalDecision } from '../../types';
-import { 
-  Button, Card, Textarea, Modal, PageLoader, EmptyState, toast 
-} from '../../components/ui';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { leavesApi } from "../../api/leaves";
+import { ApiError, ApprovalDecision } from "../../types";
+import { Button, Card, Textarea, Modal, PageLoader, EmptyState, toast } from "../../components/ui";
+import { AxiosError } from "axios";
 
 export function LeaveApprovalsPage() {
   const queryClient = useQueryClient();
   const [actionModal, setActionModal] = useState<{
     isOpen: boolean;
     leaveId: number | null;
-    action: 'approve' | 'reject' | null;
+    action: "approve" | "reject" | null;
   }>({ isOpen: false, leaveId: null, action: null });
-  const [comments, setComments] = useState('');
+  const [comments, setComments] = useState("");
 
   const { data: pendingLeaves, isLoading } = useQuery({
-    queryKey: ['pendingApprovals'],
+    queryKey: ["pendingApprovals"],
     queryFn: () => leavesApi.getPendingApprovals(),
   });
 
   const approveMutation = useMutation({
-    mutationFn: ({ id, decision, comments }: { id: number; decision: ApprovalDecision; comments?: string }) =>
-      decision === ApprovalDecision.Approved
-        ? leavesApi.approve(id, { decision, comments })
-        : leavesApi.reject(id, { decision, comments }),
+    mutationFn: ({ id, decision, comments }: { id: number; decision: ApprovalDecision; comments?: string }) => (decision === ApprovalDecision.Approved ? leavesApi.approve(id, { decision, comment: comments }) : leavesApi.reject(id, { decision, comment: comments })),
     onSuccess: (_, variables) => {
-      const action = variables.decision === ApprovalDecision.Approved ? 'approved' : 'rejected';
+      const action = variables.decision === ApprovalDecision.Approved ? "approved" : "rejected";
       toast.success(`Leave request ${action} successfully`);
-      queryClient.invalidateQueries({ queryKey: ['pendingApprovals'] });
+      queryClient.invalidateQueries({ queryKey: ["pendingApprovals"] });
       closeModal();
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to process request');
+    onError: (error: AxiosError<ApiError>) => {
+      toast.error(error.response?.data?.message || "Failed to process request");
     },
   });
 
-  const openModal = (leaveId: number, action: 'approve' | 'reject') => {
+  const openModal = (leaveId: number, action: "approve" | "reject") => {
     setActionModal({ isOpen: true, leaveId, action });
-    setComments('');
+    setComments("");
   };
 
   const closeModal = () => {
     setActionModal({ isOpen: false, leaveId: null, action: null });
-    setComments('');
+    setComments("");
   };
 
   const handleSubmit = () => {
     if (!actionModal.leaveId || !actionModal.action) return;
-    
+
     approveMutation.mutate({
       id: actionModal.leaveId,
-      decision: actionModal.action === 'approve' ? ApprovalDecision.Approved : ApprovalDecision.Rejected,
+      decision: actionModal.action === "approve" ? ApprovalDecision.Approved : ApprovalDecision.Rejected,
       comments: comments || undefined,
     });
   };
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
+    return new Date(date).toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -80,9 +76,7 @@ export function LeaveApprovalsPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-neutral-900">Pending Approvals</h1>
-        <p className="text-neutral-500 mt-1">
-          Review and process leave requests from your team
-        </p>
+        <p className="text-neutral-500 mt-1">Review and process leave requests from your team</p>
       </div>
 
       {/* Stats */}
@@ -96,9 +90,7 @@ export function LeaveApprovalsPage() {
             </div>
             <div>
               <p className="text-sm text-warning-700">Pending</p>
-              <p className="text-2xl font-bold text-warning-800">
-                {pendingLeaves?.data?.length || 0}
-              </p>
+              <p className="text-2xl font-bold text-warning-800">{pendingLeaves?.data?.length || 0}</p>
             </div>
           </div>
         </Card>
@@ -114,52 +106,36 @@ export function LeaveApprovalsPage() {
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center">
                     <span className="text-lg font-semibold text-primary-700">
-                      {leave.employee?.firstName?.[0]}{leave.employee?.lastName?.[0]}
+                      {leave.employee?.firstName?.[0]}
+                      {leave.employee?.lastName?.[0]}
                     </span>
                   </div>
                   <div>
                     <h3 className="font-semibold text-neutral-900">
                       {leave.employee?.firstName} {leave.employee?.lastName}
                     </h3>
-                    <p className="text-sm text-neutral-500">
-                      {leave.employee?.designation?.title || leave.employee?.department?.name}
-                    </p>
+                    <p className="text-sm text-neutral-500">{leave.employee?.designation?.title || leave.employee?.department?.name}</p>
                   </div>
                 </div>
 
                 {/* Leave Details */}
                 <div className="flex-1 lg:text-center">
                   <div className="flex items-center gap-2 lg:justify-center mb-1">
-                    <div
-                      className="w-2.5 h-2.5 rounded-full"
-                      style={{ backgroundColor: '#6366f1' }}
-                    />
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: "#6366f1" }} />
                     <span className="font-medium text-neutral-900">{leave.leaveType?.name}</span>
                   </div>
                   <p className="text-sm text-neutral-500">
                     {formatDate(leave.startDate)} - {formatDate(leave.endDate)}
-                    <span className="font-medium text-neutral-700 ml-2">
-                      ({getDaysCount(leave.startDate, leave.endDate)} days)
-                    </span>
+                    <span className="font-medium text-neutral-700 ml-2">({getDaysCount(leave.startDate, leave.endDate)} days)</span>
                   </p>
                 </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => openModal(leave.id, 'reject')}
-                    className="text-danger-600 border-danger-300 hover:bg-danger-50"
-                  >
+                  <Button variant="outline" size="sm" onClick={() => openModal(leave.id, "reject")} className="text-danger-600 border-danger-300 hover:bg-danger-50">
                     Reject
                   </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => openModal(leave.id, 'approve')}
-                    className="bg-success-600 hover:bg-success-700"
-                  >
+                  <Button variant="primary" size="sm" onClick={() => openModal(leave.id, "approve")} className="bg-success-600 hover:bg-success-700">
                     Approve
                   </Button>
                 </div>
@@ -192,43 +168,18 @@ export function LeaveApprovalsPage() {
       )}
 
       {/* Action Modal */}
-      <Modal
-        isOpen={actionModal.isOpen}
-        onClose={closeModal}
-        title={actionModal.action === 'approve' ? 'Approve Leave Request' : 'Reject Leave Request'}
-        size="md"
-      >
+      <Modal isOpen={actionModal.isOpen} onClose={closeModal} title={actionModal.action === "approve" ? "Approve Leave Request" : "Reject Leave Request"} size="md">
         <div className="space-y-4">
-          <p className="text-neutral-600">
-            {actionModal.action === 'approve'
-              ? 'Are you sure you want to approve this leave request?'
-              : 'Please provide a reason for rejecting this leave request.'}
-          </p>
-          
-          <Textarea
-            label={actionModal.action === 'approve' ? 'Comments (Optional)' : 'Reason for Rejection'}
-            value={comments}
-            onChange={(e) => setComments(e.target.value)}
-            placeholder={
-              actionModal.action === 'approve'
-                ? 'Add any comments for the employee...'
-                : 'Explain why this request is being rejected...'
-            }
-            rows={3}
-          />
+          <p className="text-neutral-600">{actionModal.action === "approve" ? "Are you sure you want to approve this leave request?" : "Please provide a reason for rejecting this leave request."}</p>
+
+          <Textarea label={actionModal.action === "approve" ? "Comments (Optional)" : "Reason for Rejection"} value={comments} onChange={(e) => setComments(e.target.value)} placeholder={actionModal.action === "approve" ? "Add any comments for the employee..." : "Explain why this request is being rejected..."} rows={3} />
 
           <div className="flex gap-3 pt-2">
             <Button variant="ghost" onClick={closeModal}>
               Cancel
             </Button>
-            <Button
-              variant={actionModal.action === 'approve' ? 'primary' : 'danger'}
-              onClick={handleSubmit}
-              isLoading={approveMutation.isPending}
-              className={actionModal.action === 'approve' ? 'flex-1 bg-success-600 hover:bg-success-700' : 'flex-1'}
-              disabled={actionModal.action === 'reject' && !comments.trim()}
-            >
-              {actionModal.action === 'approve' ? 'Approve' : 'Reject'}
+            <Button variant={actionModal.action === "approve" ? "primary" : "danger"} onClick={handleSubmit} isLoading={approveMutation.isPending} className={actionModal.action === "approve" ? "flex-1 bg-success-600 hover:bg-success-700" : "flex-1"} disabled={actionModal.action === "reject" && !comments.trim()}>
+              {actionModal.action === "approve" ? "Approve" : "Reject"}
             </Button>
           </div>
         </div>

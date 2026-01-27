@@ -53,7 +53,7 @@ export function LeaveApplyPage() {
   const handleFileSelect = (fileName: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const file = files[0];
-    const renamedFile = new File([file], fileName, { type: file.type });
+    const renamedFile = new File([file], `${fileName}`, { type: file.type });
     setAttachments((prev) => [...prev, ...[renamedFile]]);
   };
 
@@ -142,9 +142,9 @@ export function LeaveApplyPage() {
             <div className="bg-primary-50 border border-primary-100 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-primary-700">Available Balance</span>
-                <span className="text-lg font-semibold text-primary-700">{selectedBalance.remaining} days</span>
+                <span className="text-lg font-semibold text-primary-700">{selectedBalance.remainingDays} days</span>
               </div>
-              {selectedBalance.pending > 0 && <p className="text-xs text-primary-600 mt-1">({selectedBalance.pending} days pending approval)</p>}
+              {/* {selectedBalance.pending > 0 && <p className="text-xs text-primary-600 mt-1">({selectedBalance.pending} days pending approval)</p>} */}
             </div>
           )}
 
@@ -175,14 +175,14 @@ export function LeaveApplyPage() {
           {daysRequested > 0 && (
             <div className="flex items-center justify-between bg-neutral-50 rounded-lg p-4">
               <span className="text-sm text-neutral-600">Total Days Requested</span>
-              <span className={`text-lg font-semibold ${selectedBalance && daysRequested > selectedBalance.remaining ? "text-danger-600" : "text-neutral-900"}`}>
+              <span className={`text-lg font-semibold ${selectedBalance && daysRequested > selectedBalance.remainingDays ? "text-danger-600" : "text-neutral-900"}`}>
                 {daysRequested} day{daysRequested > 1 ? "s" : ""}
               </span>
             </div>
           )}
 
           {/* Warning if exceeding balance */}
-          {selectedBalance && daysRequested > selectedBalance.remaining && (
+          {selectedBalance && daysRequested > selectedBalance.remainingDays && (
             <div className="bg-danger-50 border border-danger-200 rounded-lg p-4 flex items-start gap-3">
               <svg className="w-5 h-5 text-danger-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />

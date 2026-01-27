@@ -61,7 +61,7 @@ export function DashboardPage() {
           <h1 className="text-2xl font-bold text-neutral-900">Welcome back, {user?.firstName}!</h1>
           <p className="text-neutral-500 mt-1">Here's what's happening with your leave requests</p>
         </div>
-        <Link to="/leaves/apply">
+        <Link to="/my-leaves/apply">
           <Button
             leftIcon={
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,14 +78,14 @@ export function DashboardPage() {
       <div>
         <h2 className="text-lg font-semibold text-neutral-900 mb-4">Leave Balances</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {balances?.map((balance) => (
+          {balances?.data?.map((balance) => (
             <Card key={balance.leaveTypeId} className="relative overflow-hidden">
               <div className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-1/2 translate-x-1/2" style={{ backgroundColor: "#6366f1" }} />
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-neutral-500">{balance.leaveType.name}</p>
-                  <p className="text-3xl font-bold text-neutral-900 mt-1">{balance.remaining}</p>
-                  <p className="text-sm text-neutral-500 mt-1">of {balance.total} days remaining</p>
+                  <p className="text-sm font-medium text-neutral-500">{balance?.leaveType?.name}</p>
+                  <p className="text-3xl font-bold text-neutral-900 mt-1">{balance.remainingDays}</p>
+                  <p className="text-sm text-neutral-500 mt-1">of {balance.allocatedDays} days remaining</p>
                 </div>
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-50">
                   <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,12 +93,12 @@ export function DashboardPage() {
                   </svg>
                 </div>
               </div>
-              {balance.pending > 0 && (
+              {/* {balance.pending > 0 && (
                 <p className="text-xs text-warning-600 mt-3 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-warning-500" />
                   {balance.pending} day(s) pending approval
                 </p>
-              )}
+              )} */}
             </Card>
           )) || (
             <Card className="col-span-full">
@@ -145,7 +145,7 @@ export function DashboardPage() {
                   description="You haven't submitted any leave requests yet."
                   action={{
                     label: "Apply for Leave",
-                    onClick: () => navigate("/leaves/apply"),
+                    onClick: () => navigate("/my-leaves/apply"),
                   }}
                 />
               </div>

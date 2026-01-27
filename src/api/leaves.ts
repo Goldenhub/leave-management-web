@@ -1,5 +1,5 @@
 import apiClient from "./axios";
-import { Leave, LeaveBalance, ApproveLeaveRequest, LeaveStatus, ApiSuccessResponse } from "../types";
+import { Leave, LeaveBalance, ApproveLeaveRequest, LeaveStatus, ApiSuccessResponse, LeaveApproval } from "../types";
 
 interface LeaveFilters {
   status?: LeaveStatus;
@@ -33,7 +33,12 @@ export const leavesApi = {
 
   // Get pending approvals (for managers)
   getPendingApprovals: async (filters?: LeaveFilters): Promise<ApiSuccessResponse<Leave[]>> => {
-    const response = await apiClient.get<ApiSuccessResponse<Leave[]>>("/leaves/pending-approvals", { params: filters });
+    const response = await apiClient.get<ApiSuccessResponse<Leave[]>>("/leaves/pending", { params: filters });
+    return response.data;
+  },
+
+  getApprovals: async (filters?: LeaveFilters): Promise<ApiSuccessResponse<LeaveApproval[]>> => {
+    const response = await apiClient.get<ApiSuccessResponse<LeaveApproval[]>>("/leaves/approvals", { params: filters });
     return response.data;
   },
 

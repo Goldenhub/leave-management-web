@@ -143,12 +143,17 @@ export interface LeaveApproval {
 }
 
 export interface LeaveBalance {
+  id: number;
+  employeeId: string;
+  employee?: Employee;
   leaveTypeId: number;
-  leaveType: LeaveType;
-  total: number;
-  used: number;
-  remaining: number;
-  pending: number;
+  leaveType?: LeaveType;
+  year: number;
+  allocatedDays: number;
+  usedDays: number;
+  remainingDays: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // ==========================================

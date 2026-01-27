@@ -4,12 +4,13 @@ import { employeesApi } from "../../api/employees";
 import { departmentsApi } from "../../api/departments";
 import { designationsApi } from "../../api/designations";
 import { rolesApi } from "../../api/roles";
-import { Department, Designation, Employee, EmploymentStatus, Gender, Role } from "../../types";
+import { ApiError, Department, Designation, Employee, EmploymentStatus, Gender, Role } from "../../types";
 import { Button, Input, Select, Card, Modal, PageLoader, EmptyState, Badge, toast } from "../../components/ui";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { z } from "zod";
+import { AxiosError } from "axios";
 
 const employeeFormSchema = z.object({
   firstName: z.string().min(1),
@@ -68,7 +69,7 @@ export function EmployeesPage() {
       toast.success("Employee deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["employees"] });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<ApiError>) => {
       toast.error(error.response?.data?.message || "Failed to delete employee");
     },
   });
@@ -279,6 +280,7 @@ function EmployeeFormModal({ isOpen, onClose, employee, departments, roles, desi
   });
 
   const filteredDesignations = useMemo(() => (departmentId ? designations.filter((d) => d.departmentId === Number(departmentId)) : []), [departmentId, designations]);
+  const filteredManagers = useMemo(() => (departmentId ? managers.filter((m) => m.departmentId === Number(departmentId)) : []), [departmentId, managers]);
 
   const createMutation = useMutation({
     mutationFn: employeesApi.create,
@@ -288,7 +290,7 @@ function EmployeeFormModal({ isOpen, onClose, employee, departments, roles, desi
       queryClient.invalidateQueries({ queryKey: ["managers"] });
       onClose();
     },
-    onError: (e: any) => toast.error(e.response?.data?.message || "Failed to create employee"),
+    onError: (e: AxiosError<ApiError, unknown>) => toast.error(e.response?.data?.message || "Failed to create employee"),
   });
 
   const updateMutation = useMutation({
@@ -299,7 +301,7 @@ function EmployeeFormModal({ isOpen, onClose, employee, departments, roles, desi
       queryClient.invalidateQueries({ queryKey: ["managers"] });
       onClose();
     },
-    onError: (e: any) => toast.error(e.response?.data?.message || "Failed to update employee"),
+    onError: (e: AxiosError<ApiError, unknown>) => toast.error(e.response?.data?.message || "Failed to update employee"),
   });
 
   const onSubmit = (data: EmployeeFormOutput) => {
@@ -354,7 +356,7 @@ function EmployeeFormModal({ isOpen, onClose, employee, departments, roles, desi
         <div className="grid grid-cols-2 gap-4">
           <Select placeholder="Select role" options={roles.map((r) => ({ value: r.id.toString(), label: r.name }))} id="role" {...register("roleId")} label="Role" error={errors.roleId?.message}></Select>
 
-          <Select placeholder="Select manager" options={managers.filter((m) => m.id !== employee?.id).map((m) => ({ value: m.id.toString(), label: `${m.firstName} ${m.lastName}` }))} id="manager" {...register("managerId")} label="Manager" error={errors.managerId?.message}></Select>
+          <Select placeholder="Select manager" options={filteredManagers.filter((m) => m.employeeId !== employee?.employeeId).map((m) => ({ value: m.employeeId, label: `${m.firstName} ${m.lastName}` }))} id="manager" {...register("managerId")} label="Manager" error={errors.managerId?.message}></Select>
         </div>
 
         {employee && (
