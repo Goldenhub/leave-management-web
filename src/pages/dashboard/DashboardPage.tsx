@@ -1,14 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { leavesApi } from "../../api/leaves";
 import { useAuthStore } from "../../stores/authStore";
-import { LeaveStatus, Permissions } from "../../types";
+import { ApiError, LeaveStatus, Permissions } from "../../types";
 import { Card, CardHeader, Button, StatusBadge, PageLoader, EmptyState } from "../../components/ui";
 import { differenceInBusinessDays } from "date-fns";
+import { AxiosError } from "axios";
 
 export function DashboardPage() {
   const { user, hasPermission } = useAuthStore();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // Mutation for updating balances
+  const { mutate: updateBalances, isPending: isUpdatingBalances } = useMutation({
+    mutationFn: () => leavesApi.updateBalances(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leaveBalances"] });
+      alert("Leave balances updated successfully!");
+    },
+    onError: (error: AxiosError<ApiError>) => {
+      alert(error.response?.data?.message || "Failed to update leave balances");
+    },
+  });
 
   if (!user?.passwordUpdated) {
     navigate("/update-password");
@@ -60,17 +74,24 @@ export function DashboardPage() {
           <h1 className="text-2xl font-bold text-neutral-900">Welcome back, {user?.firstName}!</h1>
           <p className="text-neutral-500 mt-1">Here's what's happening with your leave requests</p>
         </div>
-        <Link to="/my-leaves/apply">
-          <Button
-            leftIcon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            }
-          >
-            Apply for Leave
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          {user?.role?.name.toLowerCase() === "super admin" && (
+            <Button onClick={() => updateBalances()} disabled={isUpdatingBalances} variant="outline">
+              {isUpdatingBalances ? "Updating..." : "Update Balances"}
+            </Button>
+          )}
+          <Link to="/my-leaves/apply">
+            <Button
+              leftIcon={
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              }
+            >
+              Apply for Leave
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Leave Balance Cards */}

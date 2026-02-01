@@ -112,6 +112,12 @@ export const leavesApi = {
     return response.data;
   },
 
+  // Update leave balances (admin only)
+  updateBalances: async (): Promise<ApiSuccessResponse<null>> => {
+    const response = await apiClient.post<ApiSuccessResponse<null>>("/leaves/balances/update-now", {});
+    return response.data;
+  },
+
   // Get team calendar (for managers)
   getTeamCalendar: async (startDate: string, endDate: string): Promise<Leave[]> => {
     const response = await apiClient.get<Leave[]>("/leaves/team-calendar", {
