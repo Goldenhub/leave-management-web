@@ -1,54 +1,55 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { leavesApi } from '../../api/leaves';
-import { leaveTypesApi } from '../../api/leave-types';
-import { LeaveStatus } from '../../types';
-import { Card, Select, StatusBadge, PageLoader, EmptyState, Input } from '../../components/ui';
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { leavesApi } from "../../api/leaves";
+import { leaveTypesApi } from "../../api/leave-types";
+import { LeaveStatus } from "../../types";
+import { Card, Select, StatusBadge, PageLoader, EmptyState, Input } from "../../components/ui";
+import { differenceInBusinessDays } from "date-fns";
 
 export function AllLeavesPage() {
   const [filters, setFilters] = useState({
-    status: '',
-    leaveTypeId: '',
-    startDate: '',
-    endDate: '',
+    status: "",
+    leaveTypeId: "",
+    startDate: "",
+    endDate: "",
   });
 
   const { data: leaves, isLoading } = useQuery({
-    queryKey: ['allLeaves', filters],
-    queryFn: () => leavesApi.getAll({
-      status: filters.status as LeaveStatus || undefined,
-      leaveTypeId: filters.leaveTypeId ? parseInt(filters.leaveTypeId) : undefined,
-      startDate: filters.startDate || undefined,
-      endDate: filters.endDate || undefined,
-    }),
+    queryKey: ["allLeaves", filters],
+    queryFn: () =>
+      leavesApi.getAll({
+        status: (filters.status as LeaveStatus) || undefined,
+        leaveTypeId: filters.leaveTypeId ? parseInt(filters.leaveTypeId) : undefined,
+        startDate: filters.startDate || undefined,
+        endDate: filters.endDate || undefined,
+      }),
   });
 
   const { data: leaveTypes } = useQuery({
-    queryKey: ['leaveTypes'],
+    queryKey: ["leaveTypes"],
     queryFn: leaveTypesApi.getAll,
   });
 
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   const getDaysCount = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return differenceInBusinessDays(end, start) + 1;
   };
 
   // Summary stats
   const stats = {
     total: leaves?.data?.length || 0,
-    pending: leaves?.data?.filter(l => l.status === LeaveStatus.Pending).length || 0,
-    approved: leaves?.data?.filter(l => l.status === LeaveStatus.Approved).length || 0,
-    rejected: leaves?.data?.filter(l => l.status === LeaveStatus.Rejected).length || 0,
+    pending: leaves?.data?.filter((l) => l.status === LeaveStatus.Pending).length || 0,
+    approved: leaves?.data?.filter((l) => l.status === LeaveStatus.Approved).length || 0,
+    rejected: leaves?.data?.filter((l) => l.status === LeaveStatus.Rejected).length || 0,
   };
 
   if (isLoading) {
@@ -89,36 +90,18 @@ export function AllLeavesPage() {
           <Select
             placeholder="All Statuses"
             value={filters.status}
-            onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+            onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}
             options={[
-              { value: '', label: 'All Statuses' },
-              { value: LeaveStatus.Pending, label: 'Pending' },
-              { value: LeaveStatus.Approved, label: 'Approved' },
-              { value: LeaveStatus.Rejected, label: 'Rejected' },
-              { value: LeaveStatus.Canceled, label: 'Canceled' },
+              { value: "", label: "All Statuses" },
+              { value: LeaveStatus.Pending, label: "Pending" },
+              { value: LeaveStatus.Approved, label: "Approved" },
+              { value: LeaveStatus.Rejected, label: "Rejected" },
+              { value: LeaveStatus.Canceled, label: "Canceled" },
             ]}
           />
-          <Select
-            placeholder="All Leave Types"
-            value={filters.leaveTypeId}
-            onChange={(e) => setFilters(prev => ({ ...prev, leaveTypeId: e.target.value }))}
-            options={[
-              { value: '', label: 'All Leave Types' },
-              ...(leaveTypes?.map(t => ({ value: t.id.toString(), label: t.name })) || []),
-            ]}
-          />
-          <Input
-            type="date"
-            placeholder="From Date"
-            value={filters.startDate}
-            onChange={(e) => setFilters(prev => ({ ...prev, startDate: e.target.value }))}
-          />
-          <Input
-            type="date"
-            placeholder="To Date"
-            value={filters.endDate}
-            onChange={(e) => setFilters(prev => ({ ...prev, endDate: e.target.value }))}
-          />
+          <Select placeholder="All Leave Types" value={filters.leaveTypeId} onChange={(e) => setFilters((prev) => ({ ...prev, leaveTypeId: e.target.value }))} options={[{ value: "", label: "All Leave Types" }, ...(leaveTypes?.data?.map((t) => ({ value: t.id.toString(), label: t.name })) || [])]} />
+          <Input type="date" placeholder="From Date" value={filters.startDate} onChange={(e) => setFilters((prev) => ({ ...prev, startDate: e.target.value }))} />
+          <Input type="date" placeholder="To Date" value={filters.endDate} onChange={(e) => setFilters((prev) => ({ ...prev, endDate: e.target.value }))} />
         </div>
       </Card>
 
@@ -129,24 +112,12 @@ export function AllLeavesPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-neutral-200 bg-neutral-50">
-                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                    Employee
-                  </th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                    Leave Type
-                  </th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                    Duration
-                  </th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                    Dates
-                  </th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                    Submitted
-                  </th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">Employee</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">Leave Type</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">Duration</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">Dates</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">Status</th>
+                  <th className="text-left px-6 py-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">Submitted</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-100">
@@ -156,7 +127,8 @@ export function AllLeavesPage() {
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
                           <span className="text-xs font-medium text-primary-700">
-                            {leave.employee?.firstName?.[0]}{leave.employee?.lastName?.[0]}
+                            {leave.employee?.firstName?.[0]}
+                            {leave.employee?.lastName?.[0]}
                           </span>
                         </div>
                         <div>
@@ -167,21 +139,15 @@ export function AllLeavesPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-neutral-600">
-                      {leave.leaveType?.name}
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-neutral-900">
-                      {getDaysCount(leave.startDate, leave.endDate)} day(s)
-                    </td>
+                    <td className="px-6 py-4 text-sm text-neutral-600">{leave.leaveType?.name}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-neutral-900">{getDaysCount(leave.startDate, leave.endDate)} day(s)</td>
                     <td className="px-6 py-4 text-sm text-neutral-600">
                       {formatDate(leave.startDate)} - {formatDate(leave.endDate)}
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={leave.status} size="sm" />
                     </td>
-                    <td className="px-6 py-4 text-sm text-neutral-500">
-                      {formatDate(leave.createdAt)}
-                    </td>
+                    <td className="px-6 py-4 text-sm text-neutral-500">{formatDate(leave.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>

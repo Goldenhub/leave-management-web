@@ -237,6 +237,7 @@ export interface CreateLeaveRequest {
 }
 
 export interface ApproveLeaveRequest {
+  approverId: string;
   decision: ApprovalDecision;
   comment?: string;
 }

@@ -4,10 +4,13 @@ import { leavesApi } from "../../api/leaves";
 import { ApiError, ApprovalDecision } from "../../types";
 import { Button, Card, Textarea, Modal, PageLoader, EmptyState, toast } from "../../components/ui";
 import { AxiosError } from "axios";
+import { useAuthStore } from "../../stores/authStore";
+import { differenceInBusinessDays } from "date-fns";
 
 const STATIC_SERVER_URL = import.meta.env.VITE_SERVE_STATIC_URL;
 
 export function LeaveApprovalsPage() {
+  const approverId = useAuthStore.getState().user?.employeeId as string;
   const queryClient = useQueryClient();
   const [actionModal, setActionModal] = useState<{
     isOpen: boolean;
@@ -22,7 +25,7 @@ export function LeaveApprovalsPage() {
   });
 
   const approveMutation = useMutation({
-    mutationFn: ({ id, decision, comments }: { id: number; decision: ApprovalDecision; comments?: string }) => (decision === ApprovalDecision.Approved ? leavesApi.approve(id, { decision, comment: comments }) : leavesApi.reject(id, { decision, comment: comments })),
+    mutationFn: ({ leaveId, decision, comment }: { leaveId: number; decision: ApprovalDecision; comment?: string }) => leavesApi.approve(leaveId, { decision, comment: comment, approverId }),
     onSuccess: (_, variables) => {
       const action = variables.decision === ApprovalDecision.Approved ? "approved" : "rejected";
       toast.success(`Leave request ${action} successfully`);
@@ -48,9 +51,9 @@ export function LeaveApprovalsPage() {
     if (!actionModal.leaveId || !actionModal.action) return;
 
     approveMutation.mutate({
-      id: actionModal.leaveId,
+      leaveId: actionModal.leaveId,
       decision: actionModal.action === "approve" ? ApprovalDecision.Approved : ApprovalDecision.Rejected,
-      comments: comments || undefined,
+      comment: comments || undefined,
     });
   };
 
@@ -65,8 +68,7 @@ export function LeaveApprovalsPage() {
   const getDaysCount = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return differenceInBusinessDays(end, start) + 1;
   };
 
   if (isLoading) {

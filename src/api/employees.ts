@@ -15,6 +15,10 @@ export const employeesApi = {
     const response = await apiClient.get<ApiSuccessResponse<Employee[]>>("/employees", { params: filters });
     return response.data;
   },
+  getAllWithoutFilter: async (): Promise<ApiSuccessResponse<Employee[]>> => {
+    const response = await apiClient.get<ApiSuccessResponse<Employee[]>>("/employees");
+    return response.data;
+  },
   getMenu: async (): Promise<ApiSuccessResponse<MenuLinks[]>> => {
     const response = await apiClient.get<ApiSuccessResponse<MenuLinks[]>>("/employees/menu");
     return response.data;
@@ -35,8 +39,8 @@ export const employeesApi = {
     return response.data;
   },
 
-  update: async (id: number | string, data: UpdateEmployeeData): Promise<ApiSuccessResponse<Employee>> => {
-    const response = await apiClient.patch<ApiSuccessResponse<Employee>>(`/employees/${id}`, data);
+  update: async (id: string, data: UpdateEmployeeData): Promise<ApiSuccessResponse<Employee>> => {
+    const response = await apiClient.put<ApiSuccessResponse<Employee>>(`/employees/${id}`, data);
     return response.data;
   },
 

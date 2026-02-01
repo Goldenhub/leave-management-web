@@ -5,6 +5,8 @@ import { leavesApi } from "../../api/leaves";
 import { ApiError, LeaveStatus } from "../../types";
 import { Button, Select, Card, StatusBadge, PageLoader, EmptyState, Modal, toast } from "../../components/ui";
 import { AxiosError } from "axios";
+import { ApprovalStatusBadge } from "../../components/ui/BadgeApproval";
+import { differenceInBusinessDays } from "date-fns";
 
 export function LeaveHistoryPage() {
   const queryClient = useQueryClient();
@@ -53,8 +55,7 @@ export function LeaveHistoryPage() {
   const getDaysCount = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return differenceInBusinessDays(end, start) + 1;
   };
 
   if (isLoading) {
@@ -132,6 +133,30 @@ export function LeaveHistoryPage() {
                       Cancel
                     </Button>
                   )}
+                </div>
+              </div>
+              <div className="border border-gray-300 rounded-md p-2 mt-4">
+                <p className="text-base font-bold mb-2">Approvals</p>
+                <div className="space-y-4">
+                  {leave.approvals?.map((approval) => (
+                    <div key={approval.id}>
+                      <p className="text-sm">
+                        <strong>Name of approver:</strong> {approval.approver?.firstName} {approval.approver?.lastName}
+                      </p>
+                      <p className="text-sm">
+                        <strong>Designation:</strong>
+                        {approval.approver?.designation?.title}
+                      </p>
+                      <p className="text-sm">
+                        <strong>Department:</strong>
+                        {approval.approver?.department?.name}
+                      </p>
+                      <p className="text-sm">
+                        <strong>Approval status:</strong>
+                        <ApprovalStatusBadge status={approval.decision} size="sm" />
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </Card>

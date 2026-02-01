@@ -25,6 +25,11 @@ export const leavesApi = {
     return response.data;
   },
 
+  getAllWithoutFilter: async (): Promise<ApiSuccessResponse<Leave[]>> => {
+    const response = await apiClient.get<ApiSuccessResponse<Leave[]>>("/leaves");
+    return response.data;
+  },
+
   // Get my leaves (for employees)
   getMyLeaves: async (filters?: LeaveFilters): Promise<ApiSuccessResponse<Leave[]>> => {
     const response = await apiClient.get<ApiSuccessResponse<Leave[]>>("/leaves/own", { params: filters });
@@ -78,27 +83,27 @@ export const leavesApi = {
   },
 
   // Cancel leave request
-  cancel: async (id: number): Promise<ApiSuccessResponse<Leave>> => {
-    const response = await apiClient.post<ApiSuccessResponse<Leave>>(`/leaves/${id}/cancel`);
+  cancel: async (leaveId: number): Promise<ApiSuccessResponse<Leave>> => {
+    const response = await apiClient.post<ApiSuccessResponse<Leave>>(`/leaves/${leaveId}/cancel`);
     return response.data;
   },
 
   // Delete leave request
-  delete: async (id: number): Promise<void> => {
-    await apiClient.delete(`/leaves/${id}`);
+  delete: async (): Promise<void> => {
+    await apiClient.delete(`/leaves/`);
   },
 
-  // Approve leave
-  approve: async (id: number, data: ApproveLeaveRequest): Promise<ApiSuccessResponse<Leave>> => {
-    const response = await apiClient.post<ApiSuccessResponse<Leave>>(`/leaves/${id}/approve`, data);
+  // Approve and reject leave
+  approve: async (leaveId: number, data: ApproveLeaveRequest): Promise<ApiSuccessResponse<Leave>> => {
+    const response = await apiClient.put<ApiSuccessResponse<Leave>>(`/leaves/${leaveId}`, data);
     return response.data;
   },
 
   // Reject leave
-  reject: async (id: number, data: ApproveLeaveRequest): Promise<ApiSuccessResponse<Leave>> => {
-    const response = await apiClient.post<ApiSuccessResponse<Leave>>(`/leaves/${id}/reject`, data);
-    return response.data;
-  },
+  // reject: async (id: number, data: ApproveLeaveRequest): Promise<ApiSuccessResponse<Leave>> => {
+  //   const response = await apiClient.post<ApiSuccessResponse<Leave>>(`/leaves/${id}/reject`, data);
+  //   return response.data;
+  // },
 
   // Get leave balances
   getBalances: async (employeeId?: string): Promise<ApiSuccessResponse<LeaveBalance[]>> => {

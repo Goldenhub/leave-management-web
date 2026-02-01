@@ -6,6 +6,7 @@ import { leaveTypesApi } from "../../api/leave-types";
 import { ApiError, RequirementType } from "../../types";
 import { Button, Input, Select, Textarea, Card, toast, PageLoader } from "../../components/ui";
 import { AxiosError } from "axios";
+import { differenceInBusinessDays } from "date-fns";
 
 export function LeaveApplyPage() {
   const navigate = useNavigate();
@@ -95,12 +96,10 @@ export function LeaveApplyPage() {
   };
 
   const getDaysCount = () => {
-    if (!formData.startDate || !formData.endDate) return 0;
     const start = new Date(formData.startDate);
     const end = new Date(formData.endDate);
-    if (end < start) return 0;
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+    return differenceInBusinessDays(end, start) + 1;
   };
 
   const selectedType = leaveTypes?.data?.find((t) => t.id === parseInt(formData.leaveTypeId));
@@ -167,7 +166,7 @@ export function LeaveApplyPage() {
 
           {/* Date Range */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input label="Start Date" type="date" name="startDate" value={formData.startDate} onChange={handleChange} min={new Date().toISOString().split("T")[0]} />
+            <Input label="Start Date" type="date" name="startDate" value={formData.startDate} onChange={handleChange} />
             <Input label="End Date" type="date" name="endDate" value={formData.endDate} onChange={handleChange} min={formData.startDate || new Date().toISOString().split("T")[0]} />
           </div>
 

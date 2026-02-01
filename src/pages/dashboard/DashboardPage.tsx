@@ -4,6 +4,7 @@ import { leavesApi } from "../../api/leaves";
 import { useAuthStore } from "../../stores/authStore";
 import { LeaveStatus, Permissions } from "../../types";
 import { Card, CardHeader, Button, StatusBadge, PageLoader, EmptyState } from "../../components/ui";
+import { differenceInBusinessDays } from "date-fns";
 
 export function DashboardPage() {
   const { user, hasPermission } = useAuthStore();
@@ -48,9 +49,7 @@ export function DashboardPage() {
   const getDaysCount = (startDate: string, endDate: string) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-    return diffDays;
+    return differenceInBusinessDays(end, start) + 1;
   };
 
   return (
@@ -78,29 +77,31 @@ export function DashboardPage() {
       <div>
         <h2 className="text-lg font-semibold text-neutral-900 mb-4">Leave Balances</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {balances?.data?.map((balance) => (
-            <Card key={balance.leaveTypeId} className="relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-1/2 translate-x-1/2" style={{ backgroundColor: "#6366f1" }} />
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-neutral-500">{balance?.leaveType?.name}</p>
-                  <p className="text-3xl font-bold text-neutral-900 mt-1">{balance.remainingDays}</p>
-                  <p className="text-sm text-neutral-500 mt-1">of {balance.allocatedDays} days remaining</p>
+          {balances?.data?.length ? (
+            balances?.data?.map((balance) => (
+              <Card key={balance.leaveTypeId} className="relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 -translate-y-1/2 translate-x-1/2" style={{ backgroundColor: "#6366f1" }} />
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-neutral-500">{balance?.leaveType?.name}</p>
+                    <p className="text-3xl font-bold text-neutral-900 mt-1">{balance.remainingDays}</p>
+                    <p className="text-sm text-neutral-500 mt-1">of {balance.allocatedDays} days remaining</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-50">
+                    <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-50">
-                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              </div>
-              {/* {balance.pending > 0 && (
+                {/* {balance.pending > 0 && (
                 <p className="text-xs text-warning-600 mt-3 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-warning-500" />
                   {balance.pending} day(s) pending approval
                 </p>
               )} */}
-            </Card>
-          )) || (
+              </Card>
+            ))
+          ) : (
             <Card className="col-span-full">
               <EmptyState title="No leave balances found" description="Your leave balances will appear here once configured." />
             </Card>

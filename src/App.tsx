@@ -23,6 +23,7 @@ import { DepartmentsPage } from "./pages/departments";
 import { DesignationsPage } from "./pages/designations";
 import { RolesPage } from "./pages/roles";
 import { LeaveTypesPage } from "./pages/leave-types";
+import { ReportsPage } from "./pages/reports";
 
 // UI Components
 import { ToastContainer } from "./components/ui";
@@ -81,6 +82,7 @@ function App() {
               <Route path="/designations" element={<DesignationsPage />} />
               <Route path="/roles-permissions" element={<RolesPage />} />
               <Route path="/leave-types" element={<LeaveTypesPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
             </Route>
           </Route>
 

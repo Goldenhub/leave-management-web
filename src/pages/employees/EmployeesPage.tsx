@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { employeesApi } from "../../api/employees";
 import { departmentsApi } from "../../api/departments";
@@ -265,14 +265,14 @@ function EmployeeFormModal({ isOpen, onClose, employee, departments, roles, desi
     },
   });
 
-  const { register, handleSubmit, reset, formState } = form;
+  const { register, handleSubmit, formState } = form;
   const { errors } = formState;
 
-  useEffect(() => {
-    if (isOpen) {
-      reset();
-    }
-  }, [isOpen, reset]);
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     reset();
+  //   }
+  // }, [isOpen, reset]);
 
   const departmentId = useWatch({
     control: form.control,
@@ -294,7 +294,7 @@ function EmployeeFormModal({ isOpen, onClose, employee, departments, roles, desi
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: EmployeeFormOutput) => employeesApi.update(employee!.id, data),
+    mutationFn: (data: EmployeeFormOutput) => employeesApi.update(employee?.employeeId as string, data),
     onSuccess: () => {
       toast.success("Employee updated successfully");
       queryClient.invalidateQueries({ queryKey: ["employees"] });
@@ -360,11 +360,11 @@ function EmployeeFormModal({ isOpen, onClose, employee, departments, roles, desi
         </div>
 
         {employee && (
-          <select id="employmentStatus" {...register("employmentStatus")}>
+          <Select placeholder="Select employment status" options={["Active", "Suspended", "Terminated"].map((status) => ({ value: status, label: status }))} label="Employment status" error={errors.employmentDate?.message} {...register("employmentStatus")}>
             <option value={EmploymentStatus.Active}>Active</option>
             <option value={EmploymentStatus.Suspended}>Suspended</option>
             <option value={EmploymentStatus.Terminated}>Terminated</option>
-          </select>
+          </Select>
         )}
 
         <div className="flex gap-3 pt-4">
